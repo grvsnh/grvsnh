@@ -73,7 +73,7 @@ Equipped with these tools to build and explore:
 </p>
 
 <p align="center">
-  For more details, explore my <a href="https://gist.github.com/gauravsingh-02">VS Code settings, WSL2 setup, and aliases</a> on GitHub Gist!
+  For more details, explore my <a href="https://gist.github.com/grvsnh">VS Code settings, WSL2 setup, and aliases</a> on GitHub Gist!
 </p>
 
 ---
