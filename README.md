@@ -41,7 +41,7 @@ Proficient in the following languages and technologies:
 
 ## 🖥️ Operating Systems
 
-Comfortable working across these platforms (currently using WSL2 with Debian):
+Comfortable working across these platforms (currently using dual booted Windows + Arch):
 
 <p align="center">
   <img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows" />
