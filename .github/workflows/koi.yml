@@ -1,0 +1,59 @@
+name: Koi
+
+on:
+  schedule:
+    # Just after midnight UTC, so the koi shows the day that just ended.
+    - cron: "20 0 * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/koi.yml
+
+permissions:
+  contents: write
+
+concurrency: koi
+
+jobs:
+  koi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The latest release (1.0.2) predates ponds that are not square, so the
+      # binary is built from a pinned commit that supports --size and --scale.
+      - name: Install git-koi
+        run: |
+          set -euo pipefail
+          cargo install --git https://github.com/yalongwastaken/git-koi \
+            --rev 3d2661c4d025192deb5c27a005271f30090cf121 \
+            --locked --root "$RUNNER_TEMP/git-koi"
+          echo "$RUNNER_TEMP/git-koi/bin" >> "$GITHUB_PATH"
+
+      - name: Draw the koi
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git-koi collect "$GITHUB_REPOSITORY_OWNER" --output "$RUNNER_TEMP/snapshot.json"
+          git-koi render "$RUNNER_TEMP/snapshot.json" --output-dir "$RUNNER_TEMP/light" \
+            --body black --size 768x256 --scale 1
+          git-koi render "$RUNNER_TEMP/snapshot.json" --output-dir "$RUNNER_TEMP/dark" \
+            --body white --size 768x256 --scale 1
+          mkdir -p koi
+          cp "$RUNNER_TEMP/light/koi.gif" koi/koi-light.gif
+          cp "$RUNNER_TEMP/dark/koi.gif" koi/koi-dark.gif
+
+      - name: Commit the koi if it changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add koi/koi-light.gif koi/koi-dark.gif
+          if git diff --cached --quiet; then
+            echo "The koi is unchanged; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --quiet --message "koi: draw the day's koi"
+          git push --quiet

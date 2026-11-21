@@ -1,0 +1,8 @@
+.DS_Store
+Thumbs.db
+
+# Generated while the koi is drawn
+snapshot.json
+*.miff
+koi/koi.png
+koi/preview.html
